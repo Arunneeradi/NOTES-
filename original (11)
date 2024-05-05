@@ -1,0 +1,118 @@
+   MAVEN: 
+
+CHICKEN -- > CLEAN -- > MARNET  -- > OIL, SPICES AND RICE -- >  CHICKEN BIRYANI
+JAVA -- > COMPILE -- > TEST -- > ARTIFACT (FINAL PRODUCT) = ARTIFACT
+
+ARTIFACT:
+It is the final product of the code.
+to create an artifact we need to use build too1.
+based on the programming language your build tool will change.
+
+TYPES OF ARTIFACTS:
+1. JAR: JAVA ARCHIVE 		: Backend 
+2. WAR: WEB ARCHIVE		: Frontend + backend
+3.  EAR: ENTERPRISE ARCHIVE	: jar + war
+
+
+JAVA CODE -- > ARTIFACT -- > BUILD TOOL -- > MAVEN 
+
+MAVEN:
+its a build tool for our project.
+build means adding dependencies [lib] for the code.
+its also called as project management tool.
+it helps to create project structure.
+maven is written on java programming.
+maven works for Java programming.
+version: 1.8.0 
+year: 2004
+home: .m2 
+
+
+JAVA	: MAVEN
+PYTHON	: GRADLE
+.NET	: VS CODE
+C, C#	: MAKE FILE
+
+POM.XML FILE:
+POM means Project Object Model.
+this file will have complete info of the project.
+Ex: Name, Tools, Version, Snapshot, Dependencies.
+Extension is .xml (Extensible Markup Language)
+Note: this file must be on project folder.
+wi
+thout this file maven will not work for you.
+each project we need to have only one pom.xml  
+
+MAVEN SETUP:
+1. CREATE EC2 INSTANCE
+2. yum install git java-1.8.0-openjdk maven tree -y
+   mvn --version
+3. git clone https://github.com/devopsbyraham/jenkins-java-project.git
+4. 
+GOALS: a task to perform.
+Maven lifecycle will consist totally of 7 goals.
+each goal will work for different outputs.
+to execute goals we need to have plugins.
+PLUGIN: its a small software which automates our work.
+
+
+1. mvn compile: used to compile the code.
+main(.java) -- > compile -- > target(.class)
+
+.java  = basic raw code (we cant use this code)
+.class = executable code(we can use this code)
+
+
+2. mvn test: used to test the code
+3. mvn package: used to create artifact on project dir
+4. mvn install: used to create artifact on project dir & maven home
+   ls /root/.m2/repository/in/RAHAM/NETFLIX/1.2.2/
+5. mvn clean: to delete the artifacts 
+6. mvn clean package: to perform end to end.
+
+PROBLEMS WITHOUT MAVEN:
+1. we cant create artifacts.
+2. We cant create project structure.
+3. we cant build and deploy the apps.
+
+
+MAVEN VS ANT:
+1. MAVEN IS BUILD & PROJECT MANAGEMNT, ANT IS ONLY BUILD TOOL
+2. MAVEN HAS POM.XML, ANT HAS BUILD.XML
+3. MAVEN HAS A LIFECYCLE, ANT WILL NOT HAVE LIFECYCLE
+4. MAVEN PLUGINS ARE REUSABLE, ANT SCRIPTS ARE NOT RESUEABLE.
+5. MAVEN IS DECLARATIVE, ANT IS PROCEDURAL.
+
+
+HISTORY:
+1  yum install git java-1.8.0-openjdk maven tree -y
+    2  mvn --version
+    3  git clone https://github.com/devopsbyraham/jenkins-java-project.git
+    4  ll8
+    5  cd jenkins-java-project/
+    6  ll
+    7  rm -rf Jenkinsfile
+    8  ll
+    9  tree
+   10  ll                                                                    nexusArtifactUploader artifacts: [[artifactId: 'NETFLIX', classifier: '', file: 'target/class/NETFLIX-1.2.2.war', type: 'WAR']], credentialsId: 'dc226e32-6d72-4b84-a017-a666e6746049', groupId: 'in.RAHAM', nexusUrl: '52.194.221.148:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'NETFLIX', version: '1.2.2'
+   11  mvn compile
+   12  ll
+   13  tree
+   14  mvn test
+   15  tree
+   16  mvn package
+   17  tree
+   18  mvn install
+   19  ll /root/.m2/repository/in/RAHAM/NETFLIX/1.2.2/ dout//
+   20  ll
+   21  mvn clean
+   22  ll
+   23  mvn compile
+   24  mvn test
+   25  mvn package
+   26  mvn install
+   27  mvn clean
+   28  ll
+   29  mvn clean package
+   30  mvn clean
+   31  history  

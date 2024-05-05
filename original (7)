@@ -1,0 +1,406 @@
+TOMCAT:
+
+ITS A WEB APPLICATION SERVER USED TO DEPLOY JAVA APPLICATIONS.
+AGENT: JAVA-11
+PORT: 8080
+WE CAN DEPLOY OUR ARTIFACTS.
+ITS FREE AND OPENSOURCE
+IT IS WRITTEN ON JAVA LANGUAGE.
+YEAR: 1999 
+ALTERNATIVES: NGINX, IIS, JBOSS, GLASS FISH, WEB SPHERE
+
+
+SETUP:
+INSTALL JAVA: amazon-linux-extras install java-openjdk11 -y
+
+STEP-1: DOWNLOAD TOMCAT (dlcdn.apache.org)
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.83/bin/apache-tomcat-9.0.83.tar.gz 
+
+STEP-2: EXTRACT THE FILES
+tar -zxvf apache-tomcat-9.0.83.tar.gz
+
+STEP-3: CONFIGURE USER, PASSWORD & ROLES
+vim apache-tomcat-9.0.83/conf/tomcat-users.xml
+
+ 56   <role rolename="manager-gui"/>
+ 57   <role rolename="manager-script"/>
+ 58   <user username="tomcat" password="tarun123" roles="manager-gui, manager-script"/>
+
+STEP-4: DELETE LINE 21 AND 22
+vim apache-tomcat-9.0.83/webapps/manager/META-INF/context.xml
+
+STEP-5: STARTING TOMCAT
+sh apache-tomcat-9.0.83/bin/startup.sh
+
+CONNECTION:
+COPY PUBLIC IP:8080 
+manager apps -- > username: tomcat & password: raham123
+
+
+==========================================================
+
+
+JFROG:
+#! /bin/bash
+wget https://releases.jfrog.io/artifactory/artifactory-rpms/artifactory-rpms.repo -O jfrog-artifactory-rpms.repo
+mv jfrog-artifactory-rpms.repo /etc/yum.repos.d/
+yum update -y
+yum install jfrog-artifactory-oss -y
+systemctl start artifactory.service
+systemctl status artifactory.service
+
+
+======================================================
+
+TOMCAT SETUP:
+1. wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz
+2. tar -zxvf apache-tomcat-9.0.80.tar.gz
+3. vim apache-tomcat-9.0.80/conf/tomcat-users.xml
+
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <user username="tomcat" password="raham123" roles="manager-gui, manager-script"/>
+
+4. vim apache-tomcat-9.0.80/webapps/manager/META-INF/context.xml
+    delete line 21 & 22
+5. []
+pulic-ip of slave-1:8080 -- > manager app -- > username and password -- > 
+
+
+
+Adding tomcat creds to jenkins:
+    Dashboard
+    Manage Jenkins
+    Credentials
+    System
+    Global credentials (unrestricted)
+
+PLUGIN:
+Deploy to container
+
+
+Pipeline:
+pipeline {
+    agent {
+        label 'slave1'
+    }
+    
+    stages{
+        stage('checkout') {       fe1f3885-c3f9-41c9-9e80-14525cdacbf3
+            steps {
+                git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('artifact') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('deploy') {
+            steps {
+                deploy adapters: [
+                    tomcat9(
+                        credentialsId: '38026c45-8255-4bb1-9e62-0a6752e29cfc',
+                        path: '',
+                        url: 'http://3.110.177.222:8080/'
+                        )
+                    ],
+                    contextPath: 'netflix',
+                    war: 'target/*.war'
+            }
+        }
+    }
+}
+
+
+STEPS:
+1. CREATE JENKINS SERVER 
+2. CREATE 2 SLAVES AND CONFIGURE THEM TO JENKINS
+3. INSTALL TOMCAT ON SLAVE
+4. ADD CREDENTIALS OF SLAVE TO JENKINS
+5. INSTALL DEPLOY TO CONTAINER PLUGIN
+6. WRITE AND RUN PIPELINE 
+
+
+
+TOMCAT SETUP:
+1. wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz
+2. tar -zxvf apache-tomcat-9.0.80.tar.gz
+3. vim apache-tomcat-9.0.80/conf/tomcat-users.xml
+
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <user username="tomcat" password="raham123" roles="manager-gui, manager-script"/>
+
+4. vim apache-tomcat-9.0.80/webapps/manager/META-INF/context.xml
+    delete line 21 & 22
+5. sh apache-tomcat-9.0.80/bin/startup.sh
+
+pulic-ip of slave-1:8080 -- > manager app -- > username and password -- > 
+
+
+
+Adding tomcat creds to jenkins:                           4e38e060-2105-4c32-9112-9f89d1821e16
+    Dashboard
+    Manage Jenkins
+    Credentials
+    System
+    Global credentials (unrestricted)
+
+PLUGIN:
+Deploy to container
+
+
+Pipeline:
+pipeline {
+    agent {
+        label 'slave1'
+    }
+    
+    stages{
+        stage('checkout') {
+            steps {
+                git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('artifact') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('deploy') {
+            steps {
+                deploy adapters: [
+                    tomcat9(
+                        credentialsId: '38026c45-8255-4bb1-9e62-0a6752e29cfc',
+                        path: '',
+                        url: 'http://3.110.177.222:8080/'
+                        )
+                    ],
+                    contextPath: 'netflix',
+                    war: 'target/*.war'
+            }
+        }
+    }
+}
+
+
+STEPS:
+1. CREATE JENKINS SERVER 
+2. CREATE 2 SLAVES AND CONFIGURE THEM TO JENKINS
+3. INSTALL TOMCAT ON SLAVE
+4. ADD CREDENTIALS OF SLAVE TO JENKINS
+5. CREATE NEXUS SERVER
+6. DOWNLOAD PLUGIN  Nexus Artifact Uploader
+7. CONFIGURE NEXUS ON JENKINS
+5. INSTALL DEPLOY TO CONTAINER PLUGIN
+6. WRITE AND RUN THE PIPELINE 
+
+GIT 
+GITHUB
+MAVEN
+JENKINS
+TOMCAT
+NEXUS
+SONARQUBE
+
+ 
+Pipeline:
+pipeline {
+    agent {
+        label 'slave1'
+    }
+    
+    stages{
+        stage('checkout') {
+            steps {
+                git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('artifact') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('deploy') {
+            steps {
+                deploy adapters: [
+                    tomcat9(
+                        credentialsId: '38026c45-8255-4bb1-9e62-0a6752e29cfc',
+                        path: '',
+                        url: 'http://3.110.177.222:8080/'
+                        )
+                    ],
+                    contextPath: 'netflix',
+                    war: 'target/*.war'
+            }
+        }
+    }
+}
+
+
+STEPS:
+1. CREATE JENKINS SERVER 
+2. CREATE 2 SLAVES AND CONFIGURE THEM TO JENKINS
+3. INSTALL TOMCAT ON SLAVE
+4. ADD CREDENTIALS OF SLAVE TO JENKINS
+5. CREATE NEXUS SERVER
+6. DOWNLOAD PLUGIN  Nexus Artifact Uploader
+7. CONFIGURE NEXUS ON JENKINS
+5. INSTALL DEPLOY TO CONTAINER PLUGIN
+6. WRITE AND RUN THE PIPELINE 
+
+GIT 
+GITHUB
+MAVEN
+JENKINS
+TOMCAT
+NEXUS
+SONARQUBE
+
+pipeline {
+    agent {
+        label 'slave1'
+    }
+    
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Artifact') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('nexus upload') {
+            steps {
+                nexusArtifactUploader artifacts: [[artifactId: 'NETFLIX', classifier: '', file: 'target/NETFLIX-1.2.2.war', type: 'war']], credentialsId: 'd5f69729-fd4a-4ba2-baa9-91d20e34aeb1', groupId: 'in.RAHAM', nexusUrl: '18.206.123.44:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'netflix', version: '1.2.2'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                deploy adapters: [
+                  tomcat9(
+                    credentialsId: 'cf89c0c9-2fe8-4ae9-91f6-44af3bf240ab',
+                    path: '',
+                    url: 'http://54.208.15.180:8080/'
+                    )    
+                ],
+                contextPath: 'netflix',
+                war: 'target/*.war'
+            }
+        }
+    }
+}
+
+
+REAL SCENARIOS:
+port change:
+vim /root/apache-tomcat-9.0.80/conf/server.xml (line 69)
+sh /root/apache-tomcat-9.0.80/bin/shutdown.sh
+sh /root/apache-tomcat-9.0.80/bin/startup.sh
+
+passowrd:
+vim apache-tomcat-9.0.80/conf/tomcat-users.xml
+sh /root/apache-tomcat-9.0.80/bin/shutdown.sh
+sh /root/apache-tomcat-9.0.80/bin/startup.sh
+
+TROUBLESHOTING TYPES:
+1. JENKINS LEVEL: DevOps team
+A. SYNTAX MISTAKE
+B. CONFIGURATION
+C. PLUGIN 
+
+2. SERVER LEVEL: DevOps
+a. JAVA VERSION
+b. SOFTWARE PKGS 
+C. PORT ACCESS
+
+
+3. CODE ISSUES: Developers
+No troubleshooting from devops team.
+We need to download the logs and send them to developers? 8852885296
+
+POST BUILD ACTIONS:
+Actions that perform after build is done.
+
+
+1. always	: executes always
+2. success	: executes when build is success only
+3. failure	: executes when build is failed only
+
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('checkout') {
+            steps {
+                git 'https://github.com/devopsbyraham/jenkins-java-project.git'
+            }
+        }
+        stage('compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Artifacts') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+    }
+    post {
+        failure {
+            echo "this build is completed"
+        }
+    }
+}
+

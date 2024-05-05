@@ -1,0 +1,1029 @@
+    K8S:
+CLASS-1:
+  
+K8S:
+
+LIMITATIONS OF DOCKER SWARM:
+1. CANT DO AUTO-SCALING AUTOMATICALLY
+2. CANT DO LOAD BALANCING AUTOMATICALLY
+3. CANT HAVE DEFAULT DASHBOARD
+4. USED FOR EASY APPS 
+
+
+IT is an open-source, container orchestration platform.
+It is used to automates many of the manual processes like deploying, managing, and scaling containerized applications.
+Kubernetes was developed by GOOGLE using GO Language.
+MEM -- > GOOGLE -- > CLUSTER -- > MULTIPLE APPS OF GOOGLE -- > BORG -- > 
+Google donated Borg to CNCF in 2014.  
+1st version was released in 2015.
+ 
+
+ARCHITECTURE:  
+
+DOCKER : CNCA
+K8S: CNPCA
+
+C : CLUSTER
+N : NODE
+P : POD
+C : CONTAINER
+A : APPLICATION
+
+
+COMPONENTS:
+MASTER (Control plane)
+
+1. API SERVER: communicate with user (takes command execute & give op)
+2. ETCD: database of cluster (stores complete info of a cluster)
+3. SCHEDULER: select the worker node to shedule pods (depends on hw of node)
+4. CONTROLLER: control the k8s objects (n/w, service, Node)
+
+WORKER:
+
+1. KUBELET : its an agent (it will inform all activites to master)
+2. KUBEPROXY: it deals with nlw (ip, networks, ports)
+3. POD: group of conatiners (inside pod we have app)
+
+Note: all components of a cluster will be created as a pod.
+
+
+CLUSTER TYPES:
+1. SELF MANAGED: WE NEED TO CREATE & MANAGE THEM
+
+minikube = single node cluster
+kubeadm = multi node cluster (manual)
+kops = multi-node cluster (automation)
+
+2. CLOUD BASED: CLOUD PROVIDERS WILL MANAGE THEM
+
+AWS = EKS = ELASTIC KUBERNETES SERVICE
+AZURE = AKS = AZURE KUBERENETS SERVICE
+GOOGLE = GKS = GOOGLE KUBERENETS SERVICE
+
+
+
+MINIKUBE:
+It is a tool used to setup single node cluster on K8's. 
+It contains API Servers, ETDC database and container runtime
+It is used for development, testing, and experimentation purposes on local. 
+Here Master and worker runs on same machine
+It is a platform Independent.
+Installing Minikube is simple compared to other tools.
+
+NOTE: But we dont implement this in real-time Prod
+
+REQUIREMENTS:
+
+2 CPUs or more
+2GB of free memory
+20GB of free disk space
+Internet connection
+Container or virtual machine manager, such as: Docker.
+
+Kubectl is the command line tool for k8s
+if we want to execute commands we need to use kubectl.
+
+SETUP:
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install curl wget apt-transport-https -y
+sudo curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+sudo chmod +x /usr/local/bin/minikube
+sudo minikube version
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+sudo echo "$(cat kubectl.sha256) kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+sudo minikube start --driver=docker --force
+
+NOTE: When you download a command as binary file it need to be on /usr/local/bin 
+because all the commands in linux will be on /usr/local/bin 
+and need to give executable permission for that binary file to work as a  command.
+
+
+
+POD:
+
+It is a smallest unit of deployment in K8's.
+It is a group of containers.
+Pods are ephemeral (short living objects)
+Mostly we can use single container inside a pod but if we required, we can create multiple containers inside a same pod.
+when we create a pod, containers inside pods can share the same network namespace, and can share the same storage volumes .
+While creating pod, we must specify the image, along with any necessary configuration and resource limits.
+K8's cannot communicate with containers, they can communicate with only pods.
+ We can create this pod in two ways, 
+1. Imperative(command) 
+2. Declarative (Manifest file)
+
+
+IMPERATIVE:
+
+kubectl run pod1 --image vinodvanama/paytmmovies:latest
+kubectl get pods/pod/po
+kubectl get pod -o wide
+kubectl describe pod pod1
+kubectl delete pod pod1
+
+DECRALATIVE:
+
+vim pod.yml   (manifest file )
+ 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1                 
+spec:
+  containers:
+    - image: vinodvanama/paytmtrain:latest
+      name: cont1
+                                                                                                                                    
+execution: 
+kubectl create -f pod.yml
+kubectl get pods/pod/po
+kubectl get pod -o wide
+kubectl describe pod pod1
+kubectl delete -f raham.yml
+
+DRAWBACK: once pod is deleted we can't retive the pod.
+
+MANDATORY FEILDS OF MANIFEST:
+1. apiVersion
+2. kind
+3. metadata
+4. spec
+
+without these 4 feilds we cant create a manifest file in k8s.
+
+REPLICASET:
+it will create multiple copies of same pod.
+if we delete one pod automatically it will create new pod.
+All the pods will have same config.
+
+LABELS: used to make all pods as single unit by using key:value 
+SELECTOR: Used to select pods with same labels.
+
+use kubectl api-resources for checking the objects info
+
+vim replicaset.yml
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: movies
+  labels:
+    app: paytm
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paytm
+  template:
+    metadata:
+      labels:
+        app: paytm
+    spec:
+      containers:
+        - name: cont1
+          image: rahamshaik/moviespayyy:latest
+
+To list rs		:kubectl get rs/replicaset
+To show addtional info	:kubectl get rs -o wide
+To show complete info	:kubectl describe rs name-of-rs
+To delete the rs	:kubectl delete rs name-of-rs
+to get lables of pods 	: kubectl get pods -l app=swiggy
+TO scale rs		: kubectl scale rs/swiggy-rs --replicas=10 (LIFO)
+
+LABLES: individual pods are difficult to manage 
+so we give a comman label to group them and work with them togenther
+
+SELECTOR: used to  fileter labels and select the pods with same lables.
+
+LIFO: LAST IN FIRST OUT.
+IF A POD IS CREATED LASTLY IT WILL DELETE FIRST WHEN SCALE OUT.
+
+DRAWBACKS:
+1. we cant rollin and rollout, we cant update the application in rs.
+
+Roll In: This term is often used to describe the process of introducing new features, updates, or changes into a project or software. It could involve incorporating code changes, implementing new functionalities, or integrating updates into an existing system.
+
+HISTORY:
+    
+            
+    1  vim minikube.sh
+    2  sh minikube.sh
+    3  minikube status
+    4  kubectl run pod1 --image rahamshaik/moviespayyy:latest
+    5  kubectl get po
+    6  kubectl get po -o wide
+    7  kubectl get pod
+    8  kubectl get pods
+    9  kubectl get po
+   10  kubectl describe pod pod1
+   11  kubectl delete pod pod1
+   12  kubectl run pod1 --image rahamshaik/moviespayyy:latest
+   13  kubectl get po
+   14  kubectl get po -o wide
+   15  kubectl describe pod pod1
+   16  kubectl delete pod pod1
+   17  vim abc.yml
+   18  kubectl create -f abc.yml
+   19  kubectl get po
+   20  kubectl get po -o wide
+   21  kubectl describe pod pod1
+   22  kubectl delete pod pod1
+   23  kubectl get po
+   24  vim abc.yml
+   25  kubectl create -f abc.yml
+   26  kubectl get rs
+   27  kubectl get rs -o wide
+   2  8  kubectl describe rs movies
+   29  kubectl get po
+   30  kubectl get po --show-labels
+   31  kubectl delete po movies-gg4cn
+   32  kubectl get po --show-labels
+   33  kubectl delete pod movies-dhmfr
+   34  kubectl get po --show-labels
+   35  kubectl scale rs/movies --replicas=10
+   36  kubectl get po
+   37  kubectl scale rs/movies --replicas=5
+   38  kubectl get po
+   39  kubectl delete rs movies
+   40  kubectl get po
+   41  cat abc.yml
+   42  history
+
+DEPLOYMENT:-
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movies1
+  labels:
+    app: paytm
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paytm
+  template:
+    metadata:
+      labels:
+        app: paytm
+    spec:
+      containers:
+        - name: cont1
+          image: rahamshaik/moviespayyy:latest
+
+
+To list deployment	:kubectl get deploy
+To show addtional info	:kubectl get deploy -o wide
+To show complete info	:kubectl describe deploy name-of-deployment
+To delete the deploy	:kubectl delete deploy name-of-deploy
+to get lables of pods 	:kubectl get pods -l app=movies
+TO scale deploy		:kubectl scale deploy/name-of-deploy --replicas=10 (LIFO)
+To edit deploy		:kubectl edit deploy/name-of-deploy
+to show all pod labels	:kubectl get pods --show-labels
+To delete all pods	:kubectl delete pod --all
+
+kubectl rollout history deploy/movies-rs
+ kubectl history rollout deploy/movies-rs
+kubectl rollout undo deploy/movies-rs
+kubectl get po --watch
+
+
+METRIC SERVER:
+
+used to collect resource utilization metrics from each node and container in cluster. 
+The metrics collected include CPU usage, memory usage, and file system usage, among others.
+
+Metrics Server offers:
+
+    A single deployment that works on most clusters (see Requirements)
+    Fast autoscaling, collecting metrics every 15 seconds.
+    Resource efficiency, using 1 milli core of CPU and 2 MB of memory for each node in a cluster.
+    Scalable support up to 5,000 node clusters.
+
+api
+METRIC SERVER INSTALLATION:
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+minikube addons enable metrics-server
+(only for minikube)
+
+k  ubectl top nodes
+ku bectl top pods
+kubectl top po -A
+
+KUBECOLOR:
+wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.25/kubecolor_0.0.25_Linux_x86_64.tar.gz
+tar -zxvf kubecolor_0.0.25_Linux_x86_64.tar.gz
+./kubecolor
+chmod +x kubecolor
+mv kubecolor /usr/local/bin/
+kubecolor get po
+
+
+NAMESPACES:
+
+NAMESPACE: It is used to divide the cluster to multiple teams on real time.
+it is used to isolate the env.
+
+CLUSTER: HOUSE
+NAMESPACES: ROOM
+
+Each namespace is isolated.
+if your are room-1 are you able to see room-2.
+we can't access the objects from one namespace to another namespace.
+
+
+TYPES:
+
+default           : Is the default namespace, all objects will create here only
+kube-node-lease   : it will store object which is taken from one namespace to another.
+kube-public	  : all the public objects will store here.      
+kube-system 	  : by default k8s will create some objects, those are storing on this ns.
+every component in k8s will be create like a pod, it will be stored on kube-system ns.
+
+
+kubectl get pod -n kube-system	: to list all pods in kube-system namespace
+kubectl get pod -n default	: to list all pods in default namespace
+kubectl get pod -n kube-public	: to list all pods in kube-public namespace
+kubectl get po -A		: to list all pods in all namespaces
+kubectl get po --all-namespaces
+
+kubectl create ns dev	: to create namespace
+kubectl config set-context --current --namespace=dev : to switch to the namespace
+kubectl config view --minify | grep namespace : to see current namespace
+kubectl delete ns dev	: to delete namespace
+kubectl delete pod --all: to delete all pods
+
+
+NOTE: By deleting  the ns all objects also gets deleted.
+in real time we use rbac concept to restrict the access from one namespace to another.
+so users cant access/delete ns, because of the restriction we provide.
+we create roles and role bind for the users.
+now user can be able to work on specific resources on specific namespace.
+
+
+HISTORY:
+ 1  vim minikube.sh
+    2  sh minikube.sh
+    3  vim rs.yml
+    4  kubectl create -f rs.yml
+    5  kubectl get rs
+    6  kubectl get po
+    7  kubectl delet pod swiggy-rs-4vz8n
+    8  kubectl delete pod swiggy-rs-4vz8n
+    9  kubectl get po
+   10  kubectl scale rs/movies-rs --replicas=10
+   11  kubectl scale rs/swiggy-rs --replicas=10
+   12  kubectl get po
+   13  kubectl scale rs/swiggy-rs --replicas=3
+   14  kubectl get po
+   15  kubectl delete -f rs.yml
+   16  vim rs.yml
+   17  kubectl create -f rs.yml
+   18  kubectl describe rs
+   19  kubectl describe po
+   20  kubectl describe po | grep -i image
+   21  kubectl edit rs/movies
+   22  kubectl describe rs
+   23  kubectl describe po | grep -i image
+   24  kubectl delete -f rs.yml
+   25  vim rs.yml
+   26  kubectl create -f rs.yml
+   27  kubectl get deploy
+   28  kubectl get rs
+   29  kubectl get po
+   30  kubectl describe deploy
+   31  kubectl get po | grep -i image
+   32  kubectl get po
+   33  kubectl get po | grep -i image
+   34  kubectl describe po | grep -i image
+   35  kubectl edit deploy/movies
+   36  kubectl describe po | grep -i image
+   37  kubectl edit deploy/movies
+   38  kubectl get po
+   39  kubectl scale deploy/movies --replicas=10
+   40  kubectl get po
+   41  kubectl delete deploy movies
+   42  kubectl create -f rs.yml
+   43  kubectl get po
+   44  kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+   45  minikube addons enable metrics-server
+   46  kubectl top po
+   47  kubectl top po -watch
+   48  kubectl top po --watch
+   49  kubectl get po
+   50  wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.25/kubecolor_0.0.25_Linux_x86_64.tar.gz
+   51  tar -zxvf kubecolor_0.0.25_Linux_x86_64.tar.gz
+   52  ./kubecolor
+   53  chmod +x kubecolor
+   54  mv kubecolor /usr/local/bin/
+   55  kubecolor get po
+   56  kubectl get ns
+   57  kubecolor get ns
+   58  kubecolor api-resources
+   59  kubecolor get ns
+   60  kubecolor get po -A
+   61  kubecolor get po --all-namespaces
+   62  kubecolor get po -n default
+   63  kubecolor get po -n kube-node-lease
+   64  kubecolor get po -n kube-public
+   65  kubecolor get po -n kube-system
+   66  kubecolor get po -n default
+   67  kubecolor create ns dev
+   68  kubecolor get ns
+   69  kubecolor config set-context --current --namespace=dev
+   70  kubecolor config view
+   71  kubecolor config view  | grep -i namespace
+   72  kubecolor get po
+   73  kubecolor get po -n default
+   74  kubecolor run dev1 --image nginx
+   75  kubecolor run dev2 --image nginx
+   76  kubecolor run dev3 --image nginx
+   77  kubecolor get po
+   78  kubecolor config set-context --current --namespace=default
+   79  kubecolor config view | grep -i namespace
+   80  kubecolor get po
+   81  kubecolor get po -n dev
+   82  kubecolor delete po dev1 -n dev
+   83  kubecolor get po -n dev
+   84  kubecolor delete po dev2 -n dev
+   85  kubecolor get po -n dev
+   86  kubecolor delete ns dev
+   87  kubecolor get ns
+   88  history
+
+
+KOPS:
+INFRASTRUCTURE: Resources used to run our application on cloud.
+EX: Ec2, VPC, ALB, -------------
+
+
+Minikube -- > single node cluster
+All the pods on single node 
+kOps, also known as Kubernetes operations.
+it is an open-source tool that helps you create, destroy, upgrade, and maintain a highly available(more than one servers), production-grade Kubernetes cluster. 
+Depending on the requirement, kOps can also provide cloud infrastructure.
+kOps is mostly used in deploying AWS and GCE Kubernetes clusters. 
+But officially, the tool only supports AWS. Support for other cloud providers (such as DigitalOcean, GCP, and OpenStack) are in the beta stage.
+
+
+ADVANTAGES:
+•	Automates the provisioning of AWS and GCE Kubernetes clusters
+•	Deploys highly available Kubernetes masters
+•	Supports rolling cluster updates
+•	Autocompletion of commands in the command line
+•	Generates Terraform and CloudFormation configurations
+•	Manages cluster add-ons.
+•	Supports state-sync model for dry-runs and automatic idempotency
+•	Creates instance groups to support heterogeneous clusters
+
+ALTERNATIVES:
+Amazon EKS , MINIKUBE, KUBEADM, RANCHER, TERRAFORM.
+
+
+STEP-1: GIVING PERMISSIONS
+IAM -- > USER -- > CREATE USER -- > NAME: KOPS -- > Attach Polocies Directly -- > AdministratorAccess -- > NEXT -- > CREATE USER
+USER -- > SECURTITY CREDENTIALS -- > CREATE ACCESS KEYS -- > CLI -- > CHECKBOX -- >  CREATE ACCESS KEYS -- > DOWNLOAD 
+
+aws configure (run this command on server)
+
+SETP-2: INSTALL KUBECTL AND KOPS
+vim .bashrc
+export PATH=$PATH:/usr/local/bin/  -- > save and exit
+source .bashrc
+
+SETP-3: CREATING BUCKET 
+aws s3api create-bucket --bucket devopsbatchdec4pm.k8s.local --region us-east-1
+aws s3api put-bucket-versioning --bucket devopsbatchdec4pm.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+export KOPS_STATE_STORE=s3://devopsbatchdec4pm.k8s.local
+
+SETP-4: CREATING THE CLUSTER
+kops create cluster --name rahams.k8s.local --zones us-east-1a --master-count=1 --master-size t2.medium --node-count=2 --node-size t2.micro
+kops update cluster --name rahams.k8s.local --yes --admin
+
+
+Suggestions:
+ * list clusters with: kops get cluster
+ * edit this cluster with: kops edit cluster rahams.k8s.local
+ * edit your node instance group: kops edit ig --name=rahams.k8s.local nodes-us-east-1a
+ * edit your master instance group: kops edit ig --name=rahams.k8s.local master-us-east-1a
+
+
+ADMIN ACTIVITIES:
+To scale the worker nodes:
+kops edit ig --name=rahams.k8s.local nodes-us-east-1
+kops update cluster --name rahams.k8s.local --yes --admin 
+kops rolling-update cluster --yes
+
+ADMIN ACTIVITIES:
+kops update cluster --name rahams.k8s.local --yes
+kops rolling-update cluster
+
+TO DELETE: kops delete cluster --name rahams.k8s.local --yes
+
+SERVICE: It is used to expose the application in k8s.
+
+TYPES:
+1. CLUSTERIP: It will work inside the cluster.
+it will not expose to outer world.
+
+cl
+DRAWBACK:
+We cannot use app outside.
+
+2. NODEPORT: It will expose our application in a particular port.
+Range: 30000 - 32767 (in sg we need to give all traffic)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: abc
+spec:
+  type: NodePort
+  selector:  
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31111
+
+NOTE: UPDATE THE SG (REMOVE OLD TRAFFIC AND GIVE ALL TRAFFIC & SSH)
+DRAWBACK:
+PORT RESTRICTION.
+
+3. LOADBALACER: It will expose our app and distribute load blw pods.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: swiggy
+  name: swiggy-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: cont1
+        image: rahamshaik/trainservice:latest
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: abc
+spec:
+  type: LoadBalancer
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+
+HISTORY:
+1  aws configure
+    2  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    3  wget https://github.com/kubernetes/kops/releases/download/v1.25.0/kops-linux-amd64
+    4  chmod +x kops-linux-amd64 kubectl
+    5  mv kubectl /usr/local/bin/kubectl
+    6  mv kops-linux-amd64 /usr/local/bin/kops
+    7  kubectl version
+    8  /usr/local/bin/kubectl version
+    9  kops version
+   10  /usr/local/bin/kops version
+   11  vim .bashrc
+   12  source .bashrc
+   13  kubectl version
+   14  kops version
+   15  aws s3api create-bucket --bucket devopsbatchdec4pm.k8s.local --region us-east-1
+   16  aws s3api put-bucket-versioning --bucket devopsbatchdec4pm.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+   17  export KOPS_STATE_STORE=s3://devopsbatchdec4pm.k8s.local
+   18  kops create cluster --name rahams.k8s.local --zones us-east-1a --master-count=1 --master-size t2.medium --node-count=2 --node-size t2.micro
+   19  kops get cluster
+   20  kops edit cluster rahams.k8s.local
+   21  kops update cluster --name rahams.k8s.local --yes --admin
+   22  'kops validate cluster --wait 10m
+
+
+   23  kops validate cluster --wait 10m
+   24  kops get cluster
+   25  kubectl get no
+   26  kops edit ig --name=rahams.k8s.local nodes-us-east-1a
+   27  kops update cluster --name rahams.k8s.local --yes
+   28  kops rolling-update cluster
+   29  kubectl get no
+   30  vim abc.yml
+   31  kubectl create -f abc.yml
+   32  kubectl get deploy
+   33  kubectl get svc
+   34  kubectl describe svc sv1
+   35  kubectl get po -o wide
+   36  kubectl delete -f abc.yml
+   37  vim abc.yml
+   38  kubectl create -f abc.yml
+   39  kubectl get svc
+   40  kubectl get po -o wide
+   41  kubectl delete -f abc.yml
+   42  vim abc.yml
+   43  kubectl create -f abc.yml
+   44  kubectl get svc
+   45  kubectl delete -f abc.yml
+   46  vim abc.yml
+   47  kubectl create -f abc.yml
+   48  kubectl get svc
+   49   kops delete cluster --name rahams.k8s.local --yes
+   50  history
+
+
+=====================================================
+ENV VARIABLES:
+
+It is a way to pass configuration information to containers running within pods. 
+To set Env   vars it include the env or envFrom field in the configuration file.
+
+ENV: DIRECTLY PASSING
+ENVFROM: PASSING FROM FILE
+
+ENV:
+allows you to set environment variables for a container, specifying a value directly for each variable that you name.
+
+ENVFROM:
+allows you to set environment variables for a container by referencing either a ConfigMap or a Secret. 
+When you use envFrom, all the key-value pairs in the referenced ConfigMap or Secret are set as environment variables for the container. 
+You can also specify a common prefix string
+
+CONFIGMAPS:
+
+It is used to store the data in key-value pair, files, or command-line arguments that can be used by pods, containers and other resources in cluster
+But the data should be non confidential data ().
+But it does not provider security and encryption.
+If we want to provide encryption use secrets in kubernetes.
+Limit of config map data in only 1 MB (we cannot store more than that)
+But if we want to store a large amount of data in config maps we have to mount a volume or use a seperate database or file service.
+
+
+USE CASES:
+Configure application setting
+Configuring a pod or container
+Sharing configuration data across multiple resources
+We can store the data: By using this config maps, we can store the data like IP address, URL's and DNS etc...
+
+kubectl create deploy swiggydb --image=mariadb
+kubectl get pods
+kubectl logs swiggydb-5d49dc56-cbbqk
+
+It is crashed why because we havent specified the password for it
+
+
+kubectl set env deploy swiggydb MYSQL_ROOT_PASSWORD=Raham123 
+kubectl get pods
+now it will be on running state
+kubectl delete deploy swiggydb
+
+PASSING FROM VAR FILE:
+kubectl create deploy swiggydb --image=mariadb
+kubectl get pods
+kubectl logs swiggydb-5d49dc56-cbbqk
+
+vim vars
+
+MYSQL_ROOT_PASSWORD=Raham123
+MYSQL_USER=admin
+
+kubectl create cm dbvars --from-env-file=varsfile
+kubectl describe cm dbvars
+
+kubectl get cm
+kubectl set env deploy swiggydb --from=configmap/dbvars
+kubectl get pods
+
+SECRETS: To store sensitive data in an unencrypted format like passwords, ssh-keys etc ---
+it uses base64 encoded format
+password=raham (now we can encode and ecode the value)
+
+WHY: if i dont want to expose the sensitive info so we use SECRETS
+By default k8s will create some Secrets these are useful from me to create communicate inside the cluster
+used to communicate with one resoure to another in cluster
+These are system created secrets, we need not to delete
+
+TYPES:
+Generic: creates secrets from files, dir, literal (direct values)
+TLS: Keys and certs
+Docker Registry: used to get private images by using the password
+
+kubectl create deploy swiggydb --image=mariadb
+kubectl get po 
+kubectl create secret generic password --from-literal=ROOT_PASSWORD=raham123
+kubectl get secrets
+kubectl describe secret password
+kubectl set env deploy swiggydb --from=secrets/password
+kubectl get po 
+kubectl set env deploy newdb --from=secret/password --prefix=MYSQL_
+
+without passing prefix we cant make the pod running status
+
+TO SEE SECRETS:
+kubectl get secrets password -o yaml
+echo -n "cmFoYW0xMjM" | base64 -d
+echo -n "cmFoYW0xMjM" | base64 --decode
+
+K8S LAST CLASS ADDON TOPICS:
+
+pv:
+
+Persistent means always available.
+PVs are independent they can exist even if no pod is using them.
+it is created by administrator or dynamically created by a storage class.
+Once a PV is created, it can be bound to a Persistent Volume Claim (PVC), which is a request for storage by a pod.
+When a pod requests storage via a PVC, K8S will search for a suitable PV to satisfy the request.
+PV is bound to the PVC and the pod can use the storage.
+If no suitable PV is found, K8S will either dynamically create a new one (if the storage class supports dynamic provisioning) or the PVC will remain unbound.
+
+pvc:
+
+To use Pv we need to claim the volume using PVC.
+PVC request a PV with your desired specification (size, access, modes & speed etc) from k8s and onec a suitable PV is found it will bound to PVC
+After bounding is done to pod you can mount it as a volume.
+once userfinised iyts work the attached PV can be released the underlying PV can be reclaimed & recycled for future.
+
+RESTRICTIONS:
+1. Instances must be on same az as the ebs
+2. EBS supports only a sinlge EC2 instance mounting
+
+pv.yml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-07e5c6c3fe273239f
+    fsType: ext4
+
+pvc.yml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 12Gi
+
+dep.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pvdeploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     app: swiggy
+  template:
+    metadata:
+      labels:
+        app: swiggy
+    spec:
+      containers:
+      - name: raham
+        image: centos
+        command: ["bin/bash", "-c", "sleep 10000"]
+        volumeMounts:
+        - name: my-pv
+          mountPath: "/tmp/persistent"
+      volumes:
+        - name: my-pv
+          persistentVolumeClaim:
+            claimName: my-pvc
+
+ENTRYPOINT VS CMD:
+
+EX-1:
+FROM centos:centos7
+ENTRYPOINT ["yum", "install", "-y"]
+CMD ["httpd"]
+
+docker build -t raham:v1 .
+docker run -it --name cont1 raham:v1
+
+FROM centos:centos7
+ENTRYPOINT ["sleep"]
+CMD ["1000"]
+
+docker build -t raham:v2 .
+docker run -it --name cont2 raham:v2
+
+
+MULTI CONTAINER POD:
+
+In Kubernetes, a multi-container pod is a pod that contains more than one container.
+Containers within the same pod share the same network namespace, allowing them to communicate with each other using localhost and share the same storage volumes.
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+  - name: busybox-container
+    image: busybox:latest
+    command: ['sh', '-c', 'echo Hello from the busybox container && sleep 3600']
+
+
+kubectl get pods
+kubectl describe pod multi-container-pod
+kubectl logs multi-container-pod -c nginx-container
+kubectl logs multi-container-pod -c busybox-container
+
+
+SIDE CAR:
+It creates a helper container to main container.
+main container will have application and helper container will do help for mai container.
+
+Adapter Design Pattern:
+standardize the output pattern of main container.
+
+Ambassador Design Pattern:
+used to connect containers with the outside world
+
+Init Conatiner:
+it initialize the first work and exits later.
+
+
+INGRESS: used to expose app to outside world.
+if external world want to communicate with the internal k8s we need to use the ingress
+if i have an app when i want to access this app it will be inside the pod
+so we need to use cip,np or LB
+If we use NP or LB then we need to use the IP which is not recomended
+if i want to access google then it will go to dns -- > global --
+CORE DNS: inside the k8s
+Global DNS: everywhere (all website register on the global)
+
+in ingress we have controller which is attached to LB
+in all clouds we have controller
+
+raham.com -- > dns -- > controller
+ingress api will communicate with the services
+
+ingress need to connect to lb and connet to k8 api
+its like external lb
+
+if u use minikube we use nginx
+if you use Kubeadm we use nginx,trafiek
+but in cloud, we need not to do anything because its already connect to lb by default
+we need to create only ingress service and tell to connect to CIP or NP
+ingress work with HTTP, HTTPS routes
+
+
+minikube addons list
+minikube addons list | grep -i ingress  :  it will be disabled
+
+minikube addons enable ingress
+minikube addons list  : : it will be enabled
+kubectl get ns
+kubectl get po
+kubectl get deploy -n ingress-nginx
+but in cloud it will enabled automaticcaly
+
+vim pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fe
+  labels:
+    app: swiggy
+spec:
+  containers:
+  - name: cont1
+    image: nginx
+    ports:
+      - containerPort: 80
+
+vim svc.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: fe
+spec:
+  type: LoadBalancer
+  selector:
+    app: swiggy
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30001
+
+
+kubectl get svc
+minikube ip
+curl http://192.168.49.2:32000
+
+
+kubectl create ingress nginxsvc-ing --rule="/=fe:80" --rule="/welcome=newdep:8080"
+kubectl get ing
+kubectl describe ing
+kubectl get po
+kubectl get ep  (ep : end points)
+
+now it will show ep no found
+
+sudo vim /etc/host
+wirte minikube ip and domain
+
+192.168.49.2  raham.com
+
+ping raham.com
+curl raham.com
+vim /etc/hosts
+ping raham.com
+
+
+
+
+
+HISTORY:
+
+ 1  vim pod.yml
+    2  kubectl create -f p
+    3  kubectl create -f pod.yml
+    4  kubectl get po
+    5  kubectl describe po multi-container-pod
+    6  kubectl logs multi-container-pod -c nginx-container
+    7  kubectl logs multi-container-pod -c busybox-container
+    8  vim pod.yml
+    9  minikube addons list
+   10  minikube addons enable ingress
+   11  minikube addons list
+   12  minikube addons enable ingress-dns
+   13  minikube addons list
+   14  kubectl get all -n default
+   15  kubectl delete pod pod/multi-container-pod
+   16  kubectl delete pod multi-container-pod
+   17  vim pod.yml
+   18  kubectl create -f p
+   19  kubectl create -f pod.yml
+   20  minikube ip
+   21  curl http://192.168.49.2:30001
+   22  kubectl create ingress nginxsvc-ing --rule="/=fe:80" --rule="/welcome=newdep:8080"
+   23  kubectl get ing
+   24  kubectl get ep
+   25  vim /etc/hosts
+   26  ping raham.com
+   27  curl http://ping raham.com
+   28  curl http://raham.com
+   29  curl raham.com
+   30  curl https://raham.com
+   31  curl http://raham.com/welcome
+   32  kubectl get svc
+   33  cat Dockerfile
+   34  history

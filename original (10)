@@ -1,0 +1,541 @@
+    VCS : VERSION CONTROL SYSTEM
+to store and track each version of code separately.
+
+GIT:
+Git is used to track the files.
+It will maintain multiple versions of the same file.
+It is platform-independent.
+It is free and open-source.
+They can handle larger projects efficiently.
+It is 3rd generation of vcs.
+it is written on c programming
+it came on the year 2005
+
+CVCS VS DVCS:
+
+CENTRALIZED VCS: we can store source code on single repo.
+ex: SVN
+
+DISTRIBUTED VCS: we can store source code on Multiple repos.
+ex: GIT
+
+ROLLBACK: Going back to the previous version
+ex: v2 -- > v1
+
+How to Rollback: By storing each version of code seperately.
+
+
+STAGES OF GIT:                                                                                              
+Git have total 3 stages.
+
+1. WORKING DIRECTORY:
+Its a folder where we write the code.
+here we can't track the files.
+
+2. STAGING AREA:
+here we can track the files.
+its next version of your file.
+
+
+3. REPOSITORY:
+it's a folder where we can store tracked file.
+
+INSTALLATION:
+mkdir paytm
+cd paytm
+yum install git 
+git init 
+
+
+touch file1	: to create a file
+git status	: to show the status of file
+git add file1	: to track the file
+git commit -m "" file	: to save the tracked file
+git log		: to show all commits
+git log --oneline: to show commits under single line
+git log --oneline -2 : to show last 2 commits under single line
+
+create file -- > add file -- > commit file 
+
+The below commands are used to configure the user and email
+
+git config user.name "raham"
+git config user.email "raham@gmail.com"
+
+Note: Previous commits will not change 
+new commits will get your user and email
+
+HISTORY:
+ 1  mkdir paytm
+    2  ll
+    3  cd paytm/
+    4  yum install git
+    5  git init
+    6  ls -al
+    7  touch file1
+    8  git status
+    9  git add file1
+   10  git status
+   11  git commit -m "commit-1" file1
+   12  git status
+   13  git log
+   14  touch file2
+   15  git status
+   16  git add file2
+   17  git status
+   18  git commit -m "commit-2" file2
+   19  git log
+   20  git log --oneline
+   21  git config user.name "raham"
+   22  git config user.email "raham@gmail.com"
+   23  git log
+   24  touch file3
+   25  git status
+   26  git add file3
+   27  git status
+   28  git commit -m "commit-3" file3
+   29  git log
+   30  git log --oneline
+   31  git log --oneline -2
+   32  git log --oneline -1
+   33  history
+
+
+Day before 01-12-2023
+DAY-02:
+
+
+BRANCHES: 
+It's an individual line of development for code.
+we create different branches in real-time.
+each developer will work on their own branch.
+At the end we will combine all branches together.
+Default branch is Master.
+
+first you have to cd git command
+to acccess git respo
+git branch		: to list the branches
+git branch movies	: to create a new branch
+git checkout movies	: to switch from one branch to another.
+git checkout -b recharge: to create and switch from one branch to another.
+git branch -m old new	: to rename a branch
+git branch -D movies	: to delete a branch
+
+GIT RESTORE: to restore the deleted branches/files.
+git restore branch/file
+git checkout branch 
+
+
+PROCESS:
+
+git branch		
+git branch movies	
+git checkout movies
+touch movies{1..5}
+git status
+git add movies*
+git commit -m "dev-1 commits" movies*
+git checkout -b train
+touch train{1..5}
+git add train*
+git commit -m "dev-2 commits" train*
+git checkout -b recharge
+touch recharge{1..5}
+git add recharge*
+git commit -m "dev-3 commits" recharge*
+
+
+Note: here every dev works on the local laptop
+at the end we want all dev codes to create an application.
+so here we use GitHub to combine all dev codes together.
+
+Create a GitHub account and create Repo 
+
+git remote add origin https://github.com/revathisiriki78/paytm.git
+git push origin movies
+username:
+password:
+
+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
+
+Note: in github passwords are not accepted we need to use token 
+
+profile -- > settings -- > developer settings -- > Personal access token -- > classic -- > 
+generate new token -- > classic -- > name: paytm -- > select 6 scopes -- > generate 
+
+git push origin train
+username:
+password:
+
+git push origin recharge
+username:
+password:
+
+
+GIT MERGE: it is used to merge the file blw two branches.
+git checkout master
+git merge movies
+
+GIT REBASE: it is used to merge the file blw two branches.
+git rebase recharge
+
+MERGE VS REBASE:
+merge for public repos, rebase for private 
+merge stores history, rebase will not store the entire history
+merge will show files, rebase will not show files
+
+HISTORY:
+    1  mkdir paytm
+    2  cd paytm/
+    3  yum install git -y
+    4  touch index.htmlc
+    5  git status
+    6  ls -al
+    7  git init
+    8  git status
+    9  git add index.html
+   10  git status
+   11  git commit -m "commit-1" index.html
+   12  git log
+   13  git branch
+   14  git branch movies
+   15  git branch
+   16  ll
+   17  git checkout movies
+   18  ll
+   19  touch movies{1..5}
+   20  ll
+   21  git add *
+   22  git commit -m "dev-1" *
+   23  git status
+   24  git branch train
+   25  git branch
+   26  ll
+   27  git checkout train
+   28  ll
+   29  touch train{1..5}
+   30  ll
+   31  git status
+   32  git add *'
+   33  git add *
+   34  git commit -m "dev-2" *
+   35  git status
+   36  git branch
+   37  git checkout -b recharge
+   38  git branch
+   39  touch recharge{1..5}
+   40  git add *
+   41  git commit -m "dev-3" *
+   42  git branch
+   43  git remote add origin https://github.com/revathisiriki78/paytm.git
+   44  ls -al
+   45  git push origin master
+   46  git checkout master
+   47  ll
+   48  gi0t push origin movies
+   49  git push origin train
+   50  git push origin recharge
+   51  git branch
+   52  ll
+   53  git merge movies
+   54  ll
+   55  git branch
+   56  ll
+   57  git merge train
+   58  ll
+   59  git branch
+   60  git rebase recharge
+   61  ll
+   62  git branch
+   63  git branch -m master raham
+   64  git branch
+   65  git branch -m raham hotfix
+   66  git branch
+   67  git branch -m hotfix master
+   68  git branch
+   69  history
+===================================================================
+Today 2-12-2023 
+GIT CLONE: used to download the repository from github to local 
+git clone https://github.com/revathisiriki78/paytm.git
+
+GIT FORK: used to copy the repository from github account to another 
+
+GIT REVERT: to undo merging 
+git merge movies
+git revert movies
+
+when we revert the files that added while merging will be deleted.
+
+
+GIT PULL: getting the changes from GitHub to local.
+git pull origin master
+
+giGIT FETCH: show the changes from GitHub to local.
+git fetch origin master
+
+GIT RESTORE: used to restore deleted files and branches.  (It not works but you can delete branch using reset command reset the previous commit - git branch -f  <branch_name>)
+git branch -d recharge	: to delete a branch
+git restore recharge	: to delete a branch
+git checkout recharge
+
+rm -f index.html
+ll
+git status
+git restore index.html
+
+GIT STASH: used to hide the tracked files.
+
+touch raham{1..5}
+git add raham*
+git stash 
+ll
+git stash list
+git stash apply
+git stash clear	: to remove all stashed
+git stash pop	: to remove last stash
+
+HISTORY:
+ 1  yum install git -y
+    2  llta
+    3  git clone https://github.com/revathisiriki78/paytm.git
+    4  ll
+    5  cd paytm/
+    6  git branch
+    7  ll
+    8  git checkout movies
+    9  ll
+   10  git branch
+   11  git checkout recharge
+   12  ll
+   13  git checkout train
+   14  ll
+   15  git branch
+   16  git checkout master
+   17  ll
+   18  git merge movies
+   19  ll
+   20  git revert movies
+   21  ll
+   22  git branch
+   23  git merge train
+   24  ll
+   25  git revert train
+   26  ll
+   27  git branch
+   28  ll
+   29  git pull origin master
+   30  ll
+   31  git config pull.rebase true
+   32  git pull origin master
+   33  ll
+   34  git checkout master
+   35  git checkout movies
+   36  ll
+   37  git pull origin movies
+   38  ll
+   39  cat index.html
+   40  git pull origin movies
+   41  ll
+   42  cat index.html
+   43  git pull origin movies
+   44  cat index.html
+   45  git fetch origin movies
+   46  cat index.html
+   47  git branch
+   48  git branch -d recharge
+   49  git branch
+   50  git restore recharge
+   51  git checkout recharge
+   52  git branch
+   53  ll
+   54  git status
+   55  rm -f index.html
+   56  git status
+   57  git restore index.html
+   58  ll
+   59  rm -rf movies*
+   60  ll
+   61  git status
+   62  git restore movies*
+   63  ll
+   64  touch raham{1..5}
+   65  git add raham*
+   66  git status
+   67  git stash
+   68  git status
+   69  ll
+   70  git statsh list
+   71  git stash list
+   72  git stash apply
+   73  ll
+   74  git stash list
+   75  git stash clear
+   76  git stash list
+   77  history
+
+===================================================================
+Dt:04-12-2023
+
+MERGE CONFLICTS:
+When two differnt developers working on 2 different branches with same file
+then if they try to merge branches then merge conflict will raise 
+
+HOW TO RESOLVE: Manually
+
+vim index.html
+im dev-1 writing index.html on branch-1
+git add index.html
+git commit -m "dev-1 commits" index.html
+git branch -m master branch1                                                    Given a list of dictionaries where each dictionary represents a student's information with keys 'name', 'age', and 'grade', write a Python function that returns the average age of students for each grade. The function should return a dictionary where the keys are the grades and the values are the average ages of students in that grade.
+students = [
+    {'name': 'Alice', 'age': 20, 'grade': 'A'},
+    {'name': 'Bob', 'age': 22, 'grade': 'B'},
+    {'name': 'Charlie', 'age': 21, 'grade': 'A'},
+    {'name': 'David', 'age': 19, 'grade': 'B'},
+    {'name': 'Eve', 'age': 20, 'grade': 'A'}
+]
+
+print(average_age_per_grade(students))
+# Output: {'A': 20.33, 'B': 20.5}
+
+vim index.html
+im dev-2 writing index.html on branch-2
+git add index.html
+git commit -m "dev-2 commits" index.html
+
+vim index.html
+im dev-1 writing index.html on branch-1
+new line
+git add index.html
+git commit -m "dev-1 2nd commits" index.html
+git merge branch2
+
+
+vim index.html
+git add index.html
+git commit -m "merge commits"
+
+
+CHERRY PICK: it will merge  specific files from one branch to another branch based on commits.
+
+mkdir abcd
+cd abcd
+git init 
+
+vim file1
+git add file1
+git commit -m "commit-1" file1
+git checkout -b branch1
+
+touch java{1..5}
+git add java*
+git commit -m "java commits" java*
+
+touch python{1..5}
+git add python*
+git commit -m "python commits" python*
+
+touch go{1..5}
+git add go*
+git commit -m "go commits" go*
+
+git log --oneline
+git checkout branch1    
+git cherry-pick commit_id
+
+GIT SHOW: To show the files attached to commits.
+git log --oneline
+git show commit_id
+
+.gitignore: used to hide or ignore all the untracked files.
+this will never be tracked.
+
+vim .gitignore
+php*
+git status   
+
+
+NOTE: git restore is used to untrack the tracked files also.
+
+
+71  mkdir raham
+   72  cd raham/
+   73  git init
+   74  vim file1
+   75  git add file1
+   76  git commit -m "commit-1" file1
+   77  git branch
+   78  git branch -m master branch1
+   79  cat file1
+   80  git checkout -b branch2
+   81  ll
+   82  vim file1
+   83  git add file1
+   84  git commit -m "commit-2" file1
+   85  cat file1
+   86  git checkout branch1
+   87  cat file1
+   88  vim file1
+   89  git add file1
+   90  git commit -m "commit-3" file1
+   91  git merge branch2
+   92  vim file1
+   93  git add file1
+   94  git commit -m "commit-4"
+   95  cd
+   96  mkdir abcd
+   97  cd abcd/
+   98  git init
+   99  vim file1
+  100  git add file1
+  101  git commit -m "commit-1" file1
+  102  git checkout -b branch1
+  103  ll
+  104  touch java{1..5}
+  105  git add java*
+  106  git commit -m "java commits" java*
+  107  touch python{1..5}
+  108  git add python*
+  109  git commit -m "python commits" python*
+  110  touch go{1..5}
+  111  git add go*
+  112  git commit -m "go commits" go*
+  113  git branch
+  114  git log --oneline
+  115  git checkout master
+  116  ls
+  117  git cherry-pick 36efa2f
+  118  ls
+  119  git cherry-pick 06f5769
+  120  ll
+  121  git log --oneline
+  122  git show 98880d5
+  123  cd
+  124  git clone https://github.com/RAHAMSHAIK007/Paytm-.git
+  125  git status
+  126  cd abcd/
+  127  git status
+  128  ls
+  129  touch php{1..5}
+  130  git status
+  131  vim .gitignore
+  132  git status
+  133  vim .gitignore
+  134  git status
+  135  ls
+  136  vim .gitignore
+  137  git status
+  138  ll
+  139  vim .gitignore
+  140  git status
+  141  git add php1
+  142  git status
+  143  git restore --staged php1
+  144  git status
+  145  git add php2
+  146  git status
+  147  git restore --staged php2
+  148  git status
+  149  history
+
